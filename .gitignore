@@ -3,7 +3,7 @@
 build/
 xcuserdata/
 project.xcworkspace/
-Makefile
+#Makefile
 Makefile.in
 GNUmakefile
 lib*.a
