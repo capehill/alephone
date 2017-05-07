@@ -3016,7 +3016,8 @@ bool OGL_RenderCrosshairs()
 bool OGL_RenderText(short BaseX, short BaseY, const char *Text, unsigned char r, unsigned char g, unsigned char b)
 {
 	if (!OGL_IsActive()) return false;
-	
+
+#ifndef __amigaos4__ // MiniGL crashed on display list code :(	
 	// Create display list for the current text string;
 	// use the "standard" text-font display list (display lists can be nested)
 	GLuint TextDisplayList;
@@ -3024,6 +3025,7 @@ bool OGL_RenderText(short BaseX, short BaseY, const char *Text, unsigned char r,
 	glNewList(TextDisplayList,GL_COMPILE);
 	GetOnScreenFont().OGL_Render(Text);
 	glEndList();
+#endif
 	
 	// Place the text in the foreground of the display
 	SetProjectionType(Projection_Screen);
@@ -3069,17 +3071,28 @@ bool OGL_RenderText(short BaseX, short BaseY, const char *Text, unsigned char r,
 	
 	glLoadIdentity();
 	glTranslatef(BaseX+1.0F,BaseY+1.0F,Depth);
+
+#ifdef __amigaos4__
+	GetOnScreenFont().OGL_Render(Text);
+#else
 	glCallList(TextDisplayList);
+#endif
 	
 	// Foreground
 	SglColor3f(r/255.0f,g/255.0f,b/255.0f);
 
 	glLoadIdentity();
 	glTranslatef(BaseX,BaseY,Depth);
+
+#ifdef __amigaos4__
+	GetOnScreenFont().OGL_Render(Text);
+#else
 	glCallList(TextDisplayList);
 		
 	// Clean up
 	glDeleteLists(TextDisplayList,1);
+#endif
+
 	glPopMatrix();
 	
 	return true;

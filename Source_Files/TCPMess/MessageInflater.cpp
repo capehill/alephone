@@ -30,10 +30,10 @@
 #include "MessageInflater.h"
 #include "Logging.h"
 
-Message*
+_Message*
 MessageInflater::inflate(const UninflatedMessage& inSource)
 {
-	Message* theResult = NULL;
+	_Message* theResult = NULL;
 	
 	MessageInflaterMap::iterator i = mMap.find(inSource.inflatedType());
 	if(i != mMap.end())
@@ -83,11 +83,11 @@ MessageInflater::inflate(const UninflatedMessage& inSource)
 
 
 void
-MessageInflater::learnPrototypeForType(MessageTypeID inType, const Message& inPrototype)
+MessageInflater::learnPrototypeForType(MessageTypeID inType, const _Message& inPrototype)
 {
-	Message* theClone = inPrototype.clone();
+	_Message* theClone = inPrototype.clone();
 
-	Message* theExistingPrototype = mMap[inType];
+	_Message* theExistingPrototype = mMap[inType];
 	delete theExistingPrototype;
 	
 	mMap[inType] = theClone;

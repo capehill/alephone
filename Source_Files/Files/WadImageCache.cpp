@@ -23,6 +23,14 @@
 #include "cseries.h"
 #include "WadImageCache.h"
 
+#ifdef __amigaos4__
+namespace std {
+size_t wcslen(const wchar_t *p) {
+    return ::wcslen(p);
+}
+}
+#endif
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>

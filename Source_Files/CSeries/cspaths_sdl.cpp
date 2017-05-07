@@ -158,6 +158,69 @@ std::string get_application_identifier()
 	return std::string("org.bungie.source.AlephOne");
 }
 
+#elif defined(__amigaos4__)
+
+char get_path_list_separator()
+{
+	return ':';
+}
+
+static std::string _get_local_data_path()
+{
+	static std::string local_dir = "";//"PROGDIR:";
+	
+	return local_dir;
+}
+
+std::string get_data_path(CSPathType type)
+{
+	std::string path = "";
+	
+	switch (type) {
+		case kPathLocalData:
+		case kPathLogs:
+		case kPathPreferences:
+			path = _get_local_data_path();
+			break;
+		case kPathDefaultData:
+#ifdef PKGDATADIR
+			path = PKGDATADIR;
+#endif
+			break;
+		case kPathLegacyData:
+		case kPathBundleData:
+		case kPathLegacyPreferences:
+			// not applicable
+			break;
+		case kPathScreenshots:
+			path = _get_local_data_path() + "Screenshots";
+			break;
+		case kPathSavedGames:
+			path = _get_local_data_path() + "Saved Games";
+			break;
+		case kPathQuickSaves:
+			path = _get_local_data_path() + "Quick Saves";
+			break;
+		case kPathImageCache:
+			path = _get_local_data_path() + "Image Cache";
+			break;
+		case kPathRecordings:
+			path = _get_local_data_path() + "Recordings";
+			break;
+	}
+	return path;
+}
+
+std::string get_application_name()
+{
+	return std::string(A1_DISPLAY_NAME);
+}
+
+std::string get_application_identifier()
+{
+	return std::string("org.bungie.source.AlephOne");
+}
+
 #else
 
 // Linux and compatible

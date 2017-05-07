@@ -14,8 +14,8 @@
 #include "winconfig.h"
 #elif defined(MACOS_CLASSIC)
 #include "macconfig.h"
-#elif defined(__amigaos__)
-#include "amigaconfig.h"
+//#elif defined(__amigaos__)
+//#include "amigaconfig.h"
 #elif defined(__WATCOMC__)
 #include "watcomconfig.h"
 #elif defined(HAVE_EXPAT_CONFIG_H)

@@ -69,7 +69,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+
+#ifndef __amigaos4__
 #include <boost/filesystem.hpp>
+#endif
 
 namespace io = boost::iostreams;
 
@@ -749,7 +752,11 @@ bool FileSpecifier::SetNameWithPath(const char* NameWithPath, const DirectorySpe
 
 void FileSpecifier::SetTempName(const FileSpecifier& other)
 {
+#ifdef __amigaos4__ // wstring missing
+    name = other.name;
+#else
 	name = boost::filesystem::unique_path(other.name + "%%%%%%").string();
+#endif
 }
 
 // Get last element of path
@@ -821,6 +828,14 @@ void FileSpecifier::canonicalize_path(void)
 	// ZZZ: only if we're not naming the root directory /
 	if (!name.empty() && name[name.size()-1] == PATH_SEP && name.size() != 1)
 		name.erase(name.size()-1, 1);
+
+#ifdef __amigaos4__
+    if (!name.empty() && name[0] == PATH_SEP)
+    {
+        name.erase(0, 1);
+        //printf("Removed slash\n");
+    }
+#endif
 }
 
 // Read directory contents

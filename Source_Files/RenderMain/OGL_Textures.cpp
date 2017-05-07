@@ -1326,7 +1326,9 @@ void TextureManager::PlaceTexture(const ImageDescriptor *Image, bool normal_map)
 		{
 		case GL_NEAREST:
 		case GL_LINEAR:
+#ifndef __amigaos4__
 			glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, internalFormat, Image->GetWidth(), Image->GetHeight(), 0, Image->GetMipMapSize(0), Image->GetBuffer());
+#endif
 			break;
 		case GL_NEAREST_MIPMAP_NEAREST:
 		case GL_LINEAR_MIPMAP_NEAREST:
@@ -1340,7 +1342,9 @@ void TextureManager::PlaceTexture(const ImageDescriptor *Image, bool normal_map)
 #endif
 				int i = 0;
 				for (i = 0; i < Image->GetMipMapCount(); i++) {
+#ifndef __amigaos4__
 					glCompressedTexImage2DARB(GL_TEXTURE_2D, i, internalFormat, max(1, Image->GetWidth() >> i), max(1, Image->GetHeight() >> i), 0, Image->GetMipMapSize(i), Image->GetMipMapPtr(i));
+#endif
 				}
 				mipmapsLoaded = true;
 			} else {
@@ -1350,7 +1354,9 @@ void TextureManager::PlaceTexture(const ImageDescriptor *Image, bool normal_map)
 					mipmapsLoaded = true;
 				}  
 #endif
+#ifndef __amigaos4__
 				glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, internalFormat, Image->GetWidth(), Image->GetHeight(), 0, Image->GetMipMapSize(0), Image->GetBuffer());
+#endif
 			}
 			break;
 			
@@ -1710,7 +1716,9 @@ void LoadModelSkin(ImageDescriptor& SkinImage, short Collection, short CLUT)
 		{
 		case GL_NEAREST:
 		case GL_LINEAR:
+#ifndef __amigaos4__
 			glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, internalFormat, Image.get()->GetWidth(), Image.get()->GetHeight(), 0, Image.get()->GetMipMapSize(0), Image.get()->GetBuffer());
+#endif
 			break;
 		case GL_NEAREST_MIPMAP_NEAREST:
 		case GL_LINEAR_MIPMAP_NEAREST:
@@ -1727,7 +1735,9 @@ void LoadModelSkin(ImageDescriptor& SkinImage, short Collection, short CLUT)
 				int i = 0;
 				for (i = 0; i < Image.get()->GetMipMapCount(); i++)
 				{
+#ifndef __amigaos4__
 					glCompressedTexImage2DARB(GL_TEXTURE_2D, i, internalFormat, max(1, Image.get()->GetWidth() >> i), max(1, Image.get()->GetHeight() >> i), 0, Image.get()->GetMipMapSize(i), Image.get()->GetMipMapPtr(i));
+#endif
 				}
 				mipmapsLoaded = true;
 			}
@@ -1740,7 +1750,9 @@ void LoadModelSkin(ImageDescriptor& SkinImage, short Collection, short CLUT)
 					mipmapsLoaded = true;
 				}
 #endif
+#ifndef __amigaos4__
 				glCompressedTexImage2DARB(GL_TEXTURE_2D, 0, internalFormat, Image.get()->GetWidth(), Image.get()->GetHeight(), 0, Image.get()->GetMipMapSize(0), Image.get()->GetBuffer());
+#endif
 			}
 			break;
 

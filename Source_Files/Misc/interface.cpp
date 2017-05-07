@@ -201,7 +201,7 @@ const short max_handled_recording= RECORDING_VERSION_ALEPH_ONE_1_2;
 
 #include "lua_hud_script.h"
 
-using alephone::Screen;
+//using alephone::Screen;
 
 /* ------------- enums */
 
@@ -2940,7 +2940,7 @@ void do_preferences(void)
 
 	if (mode.bit_depth != graphics_preferences->screen_mode.bit_depth) {
 		paint_window_black();
-		Screen::instance()->Initialize(&graphics_preferences->screen_mode);
+		alephone::Screen::instance()->Initialize(&graphics_preferences->screen_mode);
 
 		/* Re fade in, so that we get the proper colortable loaded.. */
 		display_main_menu();

@@ -69,6 +69,8 @@ Aug 21, 2001 (Loren Petrich):
 #include <cmath>
 #include <string>
 
+#include <vector>
+
 #if (defined(__WIN32__) || (defined(__APPLE__) && defined(__MACH__)))
 #define OPENGL_DOESNT_COPY_ON_SWAP
 #endif

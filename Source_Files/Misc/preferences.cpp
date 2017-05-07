@@ -967,8 +967,8 @@ static const char *sw_alpha_blending_labels[4] = {
 	"Off", "Fast", "Nice", NULL
 };
 
-static const char *sw_sdl_driver_labels[5] = {
-	"Default", "None", "Direct3D", "OpenGL", NULL
+static const char *sw_sdl_driver_labels[6] = {
+	"Default", "None", "Direct3D", "OpenGL", "Compositing", NULL
 };
 
 static const char *gamma_labels[9] = {
@@ -1121,7 +1121,7 @@ std::vector<std::string> build_resolution_labels()
 {
 	std::vector<std::string> result;
 	bool first_mode = true;
-	for (std::vector<std::pair<int, int> >::const_iterator it = Screen::instance()->GetModes().begin(); it != Screen::instance()->GetModes().end(); ++it)
+	for (std::vector<std::pair<int, int> >::const_iterator it = alephone::Screen::instance()->GetModes().begin(); it != alephone::Screen::instance()->GetModes().end(); ++it)
 	{
 		ostringstream os;
 		os << it->first << "x" << it->second;
@@ -1164,7 +1164,7 @@ static void graphics_dialog(void *arg)
 	if (graphics_preferences->screen_mode.auto_resolution)
 		size_w->set_selection(0);
 	else
-		size_w->set_selection(Screen::instance()->FindMode(graphics_preferences->screen_mode.width, graphics_preferences->screen_mode.height) + 1);
+		size_w->set_selection(alephone::Screen::instance()->FindMode(graphics_preferences->screen_mode.width, graphics_preferences->screen_mode.height) + 1);
 	table->dual_add(size_w->label("Screen Size"), d);
 	table->dual_add(size_w, d);
 
@@ -1265,10 +1265,10 @@ static void graphics_dialog(void *arg)
 				changed = true;
 			}
 		}
-	    else if (Screen::instance()->ModeWidth(resolution - 1) != graphics_preferences->screen_mode.width || Screen::instance()->ModeHeight(resolution - 1) != graphics_preferences->screen_mode.height || graphics_preferences->screen_mode.auto_resolution)
+	    else if (alephone::Screen::instance()->ModeWidth(resolution - 1) != graphics_preferences->screen_mode.width || alephone::Screen::instance()->ModeHeight(resolution - 1) != graphics_preferences->screen_mode.height || graphics_preferences->screen_mode.auto_resolution)
 	    {
-		    graphics_preferences->screen_mode.width = Screen::instance()->ModeWidth(resolution - 1);
-		    graphics_preferences->screen_mode.height = Screen::instance()->ModeHeight(resolution - 1);
+		    graphics_preferences->screen_mode.width = alephone::Screen::instance()->ModeWidth(resolution - 1);
+		    graphics_preferences->screen_mode.height = alephone::Screen::instance()->ModeHeight(resolution - 1);
 			graphics_preferences->screen_mode.auto_resolution = false;
 		    changed = true;
 	    }

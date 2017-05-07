@@ -80,7 +80,7 @@ public:
 		return mDefaultHandler;
 	}
 
-	void handle(Message* inMessage, CommunicationsChannel* inChannel)
+	void handle(_Message* inMessage, CommunicationsChannel* inChannel)
 	{
 		MessageHandler* theHandler = handlerForType(inMessage->type());
 

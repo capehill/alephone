@@ -43,7 +43,10 @@
 #endif
 
 #include <cmath>
+
+#ifndef __amigaos4__
 static inline float log2(int x) { return std::log((float) x) / std::log(2.0); }
+#endif
 
 #include <stdlib.h>
 

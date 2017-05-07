@@ -75,6 +75,7 @@ enum {
 	_sw_driver_none,
 	_sw_driver_direct3d,
 	_sw_driver_opengl,
+    _sw_driver_compositing,
 };
 
 struct graphics_preferences_data

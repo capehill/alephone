@@ -35,7 +35,7 @@ typedef Uint16 MessageTypeID;
 
 class UninflatedMessage;
 
-class Message
+class _Message
 {
 public:
 	virtual	MessageTypeID		type() const = 0;
@@ -46,16 +46,16 @@ public:
 	// Caller must dispose of returned message via 'delete'
 	virtual	UninflatedMessage*	deflate() const = 0;
 
-	virtual Message*		clone() const = 0;
+	virtual _Message*		clone() const = 0;
 
-	virtual ~Message() {}
+	virtual ~_Message() {}
 
 protected:
 };
 
 
 
-class UninflatedMessage : public Message
+class UninflatedMessage : public _Message
 {
 public:
 	enum { kTypeID = 0xffff };
@@ -112,7 +112,7 @@ private:
 class AIStream;
 class AOStream;
 
-class SmallMessageHelper : public Message
+class SmallMessageHelper : public _Message
 {
 public:
 	bool			inflateFrom(const UninflatedMessage& inUninflated);
@@ -127,7 +127,7 @@ private:
 
 
 
-class BigChunkOfDataMessage : public Message
+class BigChunkOfDataMessage : public _Message
 {
 public:
 	BigChunkOfDataMessage(MessageTypeID inType, const Uint8* inBuffer = NULL, size_t inLength = 0);
@@ -216,7 +216,7 @@ private:
 
 
 template <MessageTypeID tMessageType>
-class DatalessMessage : public Message
+class DatalessMessage : public _Message
 {
 public:
 	enum { kType = tMessageType };

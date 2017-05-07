@@ -124,7 +124,7 @@ extern bool option_nogamma;
 
 using namespace alephone;
 
-Screen Screen::m_instance;
+alephone::Screen alephone::Screen::m_instance;
 
 
 // Prototypes
@@ -158,7 +158,7 @@ void start_tunnel_vision_effect(
  *  Initialize screen management
  */
 
-void Screen::Initialize(screen_mode_data* mode)
+void alephone::Screen::Initialize(screen_mode_data* mode)
 //void initialize_screen(struct screen_mode_data *mode, bool ShowFreqDialog)
 {
 	interface_bit_depth = bit_depth = mode->bit_depth;
@@ -257,7 +257,7 @@ void Screen::Initialize(screen_mode_data* mode)
 		// these are not validated in graphics prefs because
 		// SDL is not initialized yet when prefs load, so
 		// validate them here
-		if (Screen::instance()->FindMode(graphics_preferences->screen_mode.width, graphics_preferences->screen_mode.height) < 0)
+		if (alephone::Screen::instance()->FindMode(graphics_preferences->screen_mode.width, graphics_preferences->screen_mode.height) < 0)
 		{
 			graphics_preferences->screen_mode.width = 640;
 			graphics_preferences->screen_mode.height = 480;
@@ -280,57 +280,57 @@ void Screen::Initialize(screen_mode_data* mode)
 
 }
 
-int Screen::height()
+int alephone::Screen::height()
 {
 	return MainScreenLogicalHeight();
 }
 
-int Screen::width()
+int alephone::Screen::width()
 {
 	return MainScreenLogicalWidth();
 }
 
-float Screen::pixel_scale()
+float alephone::Screen::pixel_scale()
 {
 	return MainScreenPixelScale();
 }
 
-int Screen::window_height()
+int alephone::Screen::window_height()
 {
 	return std::max(static_cast<short>(480), screen_mode.height);
 }
 
-int Screen::window_width()
+int alephone::Screen::window_width()
 {
 	return std::max(static_cast<short>(640), screen_mode.width);
 }
 
-bool Screen::hud()
+bool alephone::Screen::hud()
 {
 	return screen_mode.hud;
 }
 
-bool Screen::lua_hud()
+bool alephone::Screen::lua_hud()
 {
 	return screen_mode.hud && LuaHUDRunning();
 }
 
-bool Screen::openGL()
+bool alephone::Screen::openGL()
 {
 	return screen_mode.acceleration != _no_acceleration;
 }
 
-bool Screen::fifty_percent()
+bool alephone::Screen::fifty_percent()
 {
 	return screen_mode.height == 160;
 }
 
-bool Screen::seventyfive_percent()
+bool alephone::Screen::seventyfive_percent()
 {
 	return screen_mode.height == 240;;
 }
 
-SDL_Rect Screen::window_rect()
+SDL_Rect alephone::Screen::window_rect()
 {
 	SDL_Rect r;
 	r.w = window_width();
@@ -340,7 +340,7 @@ SDL_Rect Screen::window_rect()
 	return r;
 }
 
-SDL_Rect Screen::view_rect()
+SDL_Rect alephone::Screen::view_rect()
 {
 	SDL_Rect r;
 	if (lua_hud())
@@ -392,7 +392,7 @@ SDL_Rect Screen::view_rect()
 	return r;
 }
 
-SDL_Rect Screen::map_rect()
+SDL_Rect alephone::Screen::map_rect()
 {
 	SDL_Rect r;
 	if (lua_hud())
@@ -417,7 +417,7 @@ SDL_Rect Screen::map_rect()
 	return r;
 }
 
-SDL_Rect Screen::term_rect()
+SDL_Rect alephone::Screen::term_rect()
 {
 	int wh = window_height();
 	int ww = window_width();
@@ -459,7 +459,7 @@ SDL_Rect Screen::term_rect()
 	return r;
 }
 
-SDL_Rect Screen::hud_rect()
+SDL_Rect alephone::Screen::hud_rect()
 {
 	SDL_Rect r;
 	r.w = 640;
@@ -480,13 +480,13 @@ SDL_Rect Screen::hud_rect()
 	return r;
 }
 
-void Screen::bound_screen(bool in_game)
+void alephone::Screen::bound_screen(bool in_game)
 {
 	SDL_Rect r = { 0, 0, in_game ? window_width() : 640, in_game ? window_height() : 480 };
 	bound_screen_to_rect(r, in_game);
 }
 
-void Screen::bound_screen_to_rect(SDL_Rect &r, bool in_game)
+void alephone::Screen::bound_screen_to_rect(SDL_Rect &r, bool in_game)
 {
 #ifdef HAVE_OPENGL
 	if (MainScreenIsOpenGL())
@@ -512,7 +512,7 @@ void Screen::bound_screen_to_rect(SDL_Rect &r, bool in_game)
 
 
 
-void Screen::window_to_screen(int &x, int &y)
+void alephone::Screen::window_to_screen(int &x, int &y)
 {
 #ifdef HAVE_OPENGL
 	if (MainScreenIsOpenGL())
@@ -650,7 +650,7 @@ void enter_screen(void)
 	// Reset modifier key status
 	SDL_SetModState(KMOD_NONE);
 	
-	Screen *scr = Screen::instance();
+	alephone::Screen *scr = alephone::Screen::instance();
 	int w = scr->width();
 	int h = scr->height();
 	int ww = scr->window_width();
@@ -835,6 +835,9 @@ static void change_screen_mode(int width, int height, int depth, bool nogl, bool
 			case _sw_driver_direct3d:
 				SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
 				break;
+            case _sw_driver_compositing:
+                SDL_SetHint(SDL_HINT_RENDER_DRIVER, "compositing");
+                break;
 			case _sw_driver_default:
 			default:
 				SDL_SetHint(SDL_HINT_RENDER_DRIVER, "");
@@ -1022,7 +1025,7 @@ static void change_screen_mode(int width, int height, int depth, bool nogl, bool
 	} // end if need_window
 	if (nogl || screen_mode.acceleration == _no_acceleration) {
 		if (!main_render) {
-			main_render = SDL_CreateRenderer(main_screen, -1, 0);
+			main_render = SDL_CreateRenderer(main_screen, -1, 0 /* SDL_RENDERER_SOFTWARE */);
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 			SDL_RenderSetLogicalSize(main_render, vmode_width, vmode_height);
 			main_texture = SDL_CreateTexture(main_render, pixel_format_32.format, SDL_TEXTUREACCESS_STREAMING, vmode_width, vmode_height);
@@ -1105,15 +1108,15 @@ bool get_auto_resolution_size(short *w, short *h, struct screen_mode_data *mode)
 {
 	if (screen_mode.auto_resolution)
 	{
-		short width = Screen::instance()->ModeWidth(0);
-		short height = Screen::instance()->ModeHeight(0);
+		short width = alephone::Screen::instance()->ModeWidth(0);
+		short height = alephone::Screen::instance()->ModeHeight(0);
 		// in windowed mode, use a window one step down from fullscreen size
 		if (!screen_mode.fullscreen &&
 			((width > 640) || (height > 480)) &&
-			(Screen::instance()->GetModes().size() > 1))
+			(alephone::Screen::instance()->GetModes().size() > 1))
 		{
-			width = Screen::instance()->ModeWidth(1);
-			height = Screen::instance()->ModeHeight(1);
+			width = alephone::Screen::instance()->ModeWidth(1);
+			height = alephone::Screen::instance()->ModeHeight(1);
 		}
 		if (w)
 			*w = width;
@@ -1243,7 +1246,7 @@ void render_screen(short ticks_elapsed)
 	// Set rendering-window bounds for the current sort of display to render
 	screen_mode_data *mode = &screen_mode;
 
-	SDL_Rect HUD_DestRect = Screen::instance()->hud_rect();
+	SDL_Rect HUD_DestRect = alephone::Screen::instance()->hud_rect();
 	SDL_Rect ViewRect, MapRect, TermRect;
 
 	bool ViewChangedSize = false;
@@ -1257,9 +1260,9 @@ void render_screen(short ticks_elapsed)
 	}
 
 	// Each kind of display needs its own size
-	ViewRect = Screen::instance()->view_rect();
-	MapRect = Screen::instance()->map_rect();
-	TermRect = Screen::instance()->term_rect();
+	ViewRect = alephone::Screen::instance()->view_rect();
+	MapRect = alephone::Screen::instance()->map_rect();
+	TermRect = alephone::Screen::instance()->term_rect();
 	
 	static SDL_Rect PrevViewRect = { 0, 0, 0, 0 };
 	if (memcmp(&PrevViewRect, &ViewRect, sizeof(SDL_Rect)))
@@ -1315,7 +1318,7 @@ void render_screen(short ticks_elapsed)
 	if (ViewChangedSize || MapChangedSize || SwitchedModes) {
 		clear_screen_margin();
 		update_full_screen = true;
-		if (Screen::instance()->hud() && !Screen::instance()->lua_hud())
+		if (alephone::Screen::instance()->hud() && !alephone::Screen::instance()->lua_hud())
 			draw_interface();
 
 		// Reallocate the drawing buffer
@@ -1330,7 +1333,7 @@ void render_screen(short ticks_elapsed)
 	{
 		clear_screen(false);
 		update_full_screen = true;
-		if (Screen::instance()->hud() && !Screen::instance()->lua_hud())
+		if (alephone::Screen::instance()->hud() && !alephone::Screen::instance()->lua_hud())
 			draw_interface();
 
 		clear_next_screen = false;
@@ -1376,9 +1379,9 @@ void render_screen(short ticks_elapsed)
 		OGL_MapActive = false;
 
 	// Set OpenGL viewport to world view
-	Rect sr = {0, 0, Screen::instance()->height(), Screen::instance()->width()};
+	Rect sr = {0, 0, alephone::Screen::instance()->height(), alephone::Screen::instance()->width()};
 	Rect vr = {ViewRect.y, ViewRect.x, ViewRect.y + ViewRect.h, ViewRect.x + ViewRect.w};
-	Screen::instance()->bound_screen_to_rect(ViewRect);
+	alephone::Screen::instance()->bound_screen_to_rect(ViewRect);
 	OGL_SetWindow(sr, vr, true);
 	
 #endif
@@ -1394,7 +1397,7 @@ void render_screen(short ticks_elapsed)
     // clear Lua drawing from previous frame
     // (SDL is slower if we do this before render_view)
     if (screen_mode.acceleration == _no_acceleration &&
-		(MapIsTranslucent || Screen::instance()->lua_hud()))
+		(MapIsTranslucent || alephone::Screen::instance()->lua_hud()))
         clear_screen_margin();
     
 	// Render crosshairs
@@ -1425,7 +1428,7 @@ void render_screen(short ticks_elapsed)
 	
 #ifdef HAVE_OPENGL
 	// Set OpenGL viewport to whole window (so HUD will be in the right position)
-	Screen::instance()->bound_screen();
+	alephone::Screen::instance()->bound_screen();
 	OGL_SetWindow(sr, sr, true);
 #endif
 	
@@ -1434,8 +1437,8 @@ void render_screen(short ticks_elapsed)
 	// then blit the software rendering to the screen
 	if (screen_mode.acceleration != _no_acceleration) {
 #ifdef HAVE_OPENGL
-		if (Screen::instance()->hud()) {
-			if (Screen::instance()->lua_hud())
+		if (alephone::Screen::instance()->hud()) {
+			if (alephone::Screen::instance()->lua_hud())
 				Lua_DrawHUD(ticks_elapsed);
 			else {
 				Rect dr = {HUD_DestRect.y, HUD_DestRect.x, HUD_DestRect.y + HUD_DestRect.h, HUD_DestRect.x + HUD_DestRect.w};
@@ -1468,7 +1471,7 @@ void render_screen(short ticks_elapsed)
 		}
 		
 		// Update HUD
-		if (Screen::instance()->lua_hud())
+		if (alephone::Screen::instance()->lua_hud())
 		{
 			Lua_DrawHUD(ticks_elapsed);
 		}
@@ -1480,14 +1483,14 @@ void render_screen(short ticks_elapsed)
 
 		// Update terminal
 		if (world_view->terminal_mode_active) {
-			if (Term_RenderRequest || Screen::instance()->lua_hud()) {
+			if (Term_RenderRequest || alephone::Screen::instance()->lua_hud()) {
 				SDL_Rect src_rect = { 0, 0, Term_Buffer->w, Term_Buffer->h };
 				DrawSurface(Term_Buffer, TermRect, src_rect);
 				Term_RenderRequest = false;
 			}
 		}
 
-		if (update_full_screen || Screen::instance()->lua_hud())
+		if (update_full_screen || alephone::Screen::instance()->lua_hud())
 		{
 			MainScreenUpdateRect(0, 0, 0, 0);
 		}
@@ -1766,17 +1769,17 @@ void render_overhead_map(struct view_data *view)
 #ifdef HAVE_OPENGL
 	if (OGL_IsActive()) {
 		// Set OpenGL viewport to world view
-		Rect sr = {0, 0, Screen::instance()->height(), Screen::instance()->width()};
-		SDL_Rect MapRect = Screen::instance()->map_rect();
+		Rect sr = {0, 0, alephone::Screen::instance()->height(), alephone::Screen::instance()->width()};
+		SDL_Rect MapRect = alephone::Screen::instance()->map_rect();
 		Rect mr = {MapRect.y, MapRect.x, MapRect.y + MapRect.h, MapRect.x + MapRect.w};
-		Screen::instance()->bound_screen_to_rect(MapRect);
+		alephone::Screen::instance()->bound_screen_to_rect(MapRect);
 		OGL_SetWindow(sr, mr, true);
 	}
 #endif
 	struct overhead_map_data overhead_data;
 	SDL_FillRect(Map_Buffer, NULL, SDL_MapRGB(Map_Buffer->format, 0, 0, 0));
 
-	SDL_Rect maprect = Screen::instance()->map_rect();
+	SDL_Rect maprect = alephone::Screen::instance()->map_rect();
 	overhead_data.half_width = maprect.w >> 1;
 	overhead_data.half_height = maprect.h >> 1;
 	overhead_data.width = maprect.w;
@@ -1851,7 +1854,7 @@ static inline void draw_pattern_rect(T *p, int pitch, uint32 pixel, const SDL_Re
 void darken_world_window(void)
 {
 	// Get world window bounds
-	SDL_Rect r = Screen::instance()->window_rect();
+	SDL_Rect r = alephone::Screen::instance()->window_rect();
 
 #ifdef HAVE_OPENGL
 	if (MainScreenIsOpenGL()) {
@@ -1952,7 +1955,7 @@ void DrawSurface(SDL_Surface *s, SDL_Rect &dest_rect, SDL_Rect &src_rect)
 			new_src_rect.h = static_cast<Uint16>(new_src_rect.h * y_scale);
 		}
 		SDL_BlitSurface(surface, &new_src_rect, main_surface, &dest_rect);
-		if (!Screen::instance()->lua_hud())
+		if (!alephone::Screen::instance()->lua_hud())
 			MainScreenUpdateRects(1, &dest_rect);
 		
 		if (surface != s)
@@ -2030,18 +2033,18 @@ void clear_screen_margin()
 	}
 #endif
     SDL_Rect r, wr, dr;
-    wr = Screen::instance()->window_rect();
+    wr = alephone::Screen::instance()->window_rect();
     if (world_view->terminal_mode_active)
-        dr = Screen::instance()->term_rect();
+        dr = alephone::Screen::instance()->term_rect();
     else if (world_view->overhead_map_active && !map_is_translucent())
-        dr = Screen::instance()->map_rect();
+        dr = alephone::Screen::instance()->map_rect();
     else
-        dr = Screen::instance()->view_rect();
+        dr = alephone::Screen::instance()->view_rect();
 
 	dr.x -= wr.x;
 	dr.y -= wr.y;
-	if (Screen::instance()->hud() && !Screen::instance()->lua_hud())
-		wr.h -= Screen::instance()->hud_rect().h;
+	if (alephone::Screen::instance()->hud() && !alephone::Screen::instance()->lua_hud())
+		wr.h -= alephone::Screen::instance()->hud_rect().h;
 	
     if (dr.x > 0)
     {
@@ -2154,13 +2157,52 @@ void MainScreenUpdateRect(int x, int y, int w, int h)
 	r.h = h;
 	MainScreenUpdateRects(1, &r);
 }
+
+#if 1
+
+#include <proto/exec.h>
+
+void MainScreenUpdateRects(size_t count, const SDL_Rect *rects)
+{
+    Uint32 a = SDL_GetTicks();
+
+	SDL_UpdateTexture(main_texture, NULL, main_surface->pixels, main_surface->pitch);
+	
+    Uint32 b = SDL_GetTicks();
+
+    SDL_RenderClear(main_render);
+	
+    Uint32 c = SDL_GetTicks();
+
+    SDL_RenderCopy(main_render, main_texture, NULL, NULL);
+
+    Uint32 d = SDL_GetTicks();
+
+//	for (size_t i = 0; i < count; ++i) {
+//		SDL_RenderCopy(main_render, main_texture, &rects[i], &rects[i]);
+//	}
+	SDL_RenderPresent(main_render);
+
+    Uint32 e = SDL_GetTicks();
+
+    IExec->DebugPrintF("update %u ms, clear %u ms, copy %u ms, present %u ms, total %u ms\n",
+        b-a, c-b, d-c, e-d, e-a);
+}
+
+#else
+
 void MainScreenUpdateRects(size_t count, const SDL_Rect *rects)
 {
 	SDL_UpdateTexture(main_texture, NULL, main_surface->pixels, main_surface->pitch);
-	SDL_RenderClear(main_render);
-	SDL_RenderCopy(main_render, main_texture, NULL, NULL);
+
+    SDL_RenderClear(main_render);
+
+    SDL_RenderCopy(main_render, main_texture, NULL, NULL);
+
 //	for (size_t i = 0; i < count; ++i) {
 //		SDL_RenderCopy(main_render, main_texture, &rects[i], &rects[i]);
 //	}
 	SDL_RenderPresent(main_render);
 }
+
+#endif

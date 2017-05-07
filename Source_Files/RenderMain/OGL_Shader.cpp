@@ -19,14 +19,14 @@
  
  Implements OpenGL vertex/fragment shader class
  */
-#include <algorithm>
-#include <iostream>
+//#include <algorithm>
+
+#include <map>
 
 #include "OGL_Shader.h"
 #include "FileHandler.h"
 #include "OGL_Setup.h"
 #include "InfoTree.h"
-
 
 // gl_ClipVertex workaround
 // In Mac OS X 10.4 and Mesa, setting gl_ClipVertex causes a black screen.
@@ -176,7 +176,9 @@ void parseFile(FileSpecifier& fileSpec, std::string& s) {
 
 
 GLhandleARB parseShader(const GLcharARB* str, GLenum shaderType) {
-
+#ifdef __amigaos4__
+    return 0;
+#else
 	GLint status;
 	GLhandleARB shader = glCreateShaderObjectARB(shaderType);
 
@@ -207,6 +209,7 @@ GLhandleARB parseShader(const GLcharARB* str, GLenum shaderType) {
 		glDeleteObjectARB(shader);
 		return 0;
 	}
+#endif
 }
 
 void Shader::loadAll() {
@@ -255,7 +258,7 @@ Shader::Shader(const std::string& name, FileSpecifier& vert, FileSpecifier& frag
 }
 
 void Shader::init() {
-
+#ifndef __amigaos4__
 	std::fill_n(_uniform_locations, static_cast<int>(NUMBER_OF_UNIFORM_LOCATIONS), -1);
 	std::fill_n(_cached_floats, static_cast<int>(NUMBER_OF_UNIFORM_LOCATIONS), 0.0);
 
@@ -289,19 +292,22 @@ void Shader::init() {
 	glUseProgramObjectARB(0);
 
 //	assert(glGetError() == GL_NO_ERROR);
+#endif
 }
 
 void Shader::setFloat(UniformName name, float f) {
-
+#ifndef __amigaos4__
 	if (_cached_floats[name] != f) {
 		_cached_floats[name] = f;
 		glUniform1fARB(getUniformLocation(name), f);
 	}
+#endif
 }
 
 void Shader::setMatrix4(UniformName name, float *f) {
-
+#ifndef __amigaos4__
 	glUniformMatrix4fvARB(getUniformLocation(name), 1, false, f);
+#endif
 }
 
 Shader::~Shader() {
@@ -310,19 +316,25 @@ Shader::~Shader() {
 
 void Shader::enable() {
 	if(!_loaded) { init(); }
+#ifndef __amigaos4__
 	glUseProgramObjectARB(_programObj);
+#endif
 }
 
 void Shader::disable() {
+#ifndef __amigaos4__
 	glUseProgramObjectARB(0);
+#endif
 }
 
 void Shader::unload() {
+#ifndef __amigaos4__
 	if(_programObj) {
 		glDeleteObjectARB(_programObj);
 		_programObj = 0;
 		_loaded = false;
 	}
+#endif
 }
 
 int16 Shader::passes() {

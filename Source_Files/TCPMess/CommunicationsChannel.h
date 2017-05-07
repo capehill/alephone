@@ -105,12 +105,12 @@ public:
 	// spent waiting for a message (or a specific message, below) to be completely
 	// received.  'Inactivity' timeouts limit the amount of time that may pass without
 	// any incoming data at all being found on the underlying connection.
-	Message*	receiveMessage(Uint32 inOverallTimeout = kSSRAnyMessageTimeout,
+	_Message*	receiveMessage(Uint32 inOverallTimeout = kSSRAnyMessageTimeout,
 				Uint32 inInactivityTimeout = kSSRAnyDataTimeout);
 
 	// As above, but if messages of type other than inType are received, they're handled
 	// normally (so might want to install conservative Handler first)
-	Message*	receiveSpecificMessage(MessageTypeID inType,
+	_Message*	receiveSpecificMessage(MessageTypeID inType,
 				 Uint32 inOverallTimeout = kSSRSpecificMessageTimeout,
 				 Uint32 inInactivityTimeout = kSSRAnyDataTimeout);
 
@@ -119,7 +119,7 @@ public:
 				  Uint32 inOverallTimeout = kSSRSpecificMessageTimeout,
 				  Uint32 inInactivityTimeout = kSSRAnyDataTimeout)
 	{
-		std::auto_ptr<Message> receivedMessage(receiveSpecificMessage(inType, inOverallTimeout, inInactivityTimeout));
+		std::auto_ptr<_Message> receivedMessage(receiveSpecificMessage(inType, inOverallTimeout, inInactivityTimeout));
 		tMessage* result = dynamic_cast<tMessage*>(receivedMessage.get());
 		if(result != NULL)
 			receivedMessage.release();
@@ -166,7 +166,7 @@ public:
 		Uint32 inInactivityTimeout = kOutgoingInactivityTimeout);
 	
 	// Copies the given message (or at least its bytes) to make use less error-prone
-	void		enqueueOutgoingMessage(const Message& inMessage);
+	void		enqueueOutgoingMessage(const _Message& inMessage);
 
 	bool		isConnected() const { return mConnected; }
 
@@ -230,7 +230,7 @@ private:
 
 	Uint32		mTicksAtLastReceive;
 
-	typedef std::list<Message*>	MessageQueue;
+	typedef std::list<_Message*>	MessageQueue;
 	MessageQueue	mIncomingMessages;
 
 

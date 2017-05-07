@@ -461,7 +461,7 @@ struct Client {
 	bool can_pregame_chat() { return ((state == _connected) || (state == _connected_but_not_yet_shown) || (state == _ungatherable) || (state == _joiner_didnt_accept) || (state == _awaiting_accept_join) || (state == _awaiting_map)); }
 
 	void handleJoinerInfoMessage(JoinerInfoMessage*, CommunicationsChannel*);
-	void unexpectedMessageHandler(Message *, CommunicationsChannel*);
+	void unexpectedMessageHandler(_Message *, CommunicationsChannel*);
 	void handleCapabilitiesMessage(CapabilitiesMessage*,CommunicationsChannel*);
 	void handleAcceptJoinMessage(AcceptJoinMessage*, CommunicationsChannel*);
 	void handleChatMessage(NetworkChatMessage*, CommunicationsChannel*);

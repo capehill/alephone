@@ -8,8 +8,6 @@
 
 #include "OGL_Headers.h"
 
-#include <iostream>
-
 #include "Rasterizer_Shader.h"
 
 #include "lightsource.h"

@@ -16,7 +16,7 @@ OBJS= $(SRC:.cpp=.o)
 
 DEFINES= -DSDL -DHAVE_OPENGL -DHAVE_LUA -DHAVE_UNISTD_H -DHAVE_MEMMOVE #-D__USE_AMIGAOS_NAMESPACE__ #HAVE_LUA HAVE_SDL_IMAGE
 
-CFLAGS=-O0 -ggdb $(HEADERS) $(DEFINES) # -Wall
+CFLAGS=-O2 -ggdb $(HEADERS) $(DEFINES) -Wall
 
 LIBS= XML/libxml.a TCPMess/libtcpmess.a Sound/libsound.a \
 RenderOther/librenderother.a RenderMain/librendermain.a Network/libnetwork.a \

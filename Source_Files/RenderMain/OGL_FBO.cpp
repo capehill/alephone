@@ -31,6 +31,7 @@
 std::vector<FBO *> FBO::active_chain;
 
 FBO::FBO(GLuint w, GLuint h, bool srgb) : _h(h), _w(w), _srgb(srgb) {
+#ifndef __amigaos4__
 	glGenFramebuffersEXT(1, &_fbo);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _fbo);
 	
@@ -45,9 +46,11 @@ FBO::FBO(GLuint w, GLuint h, bool srgb) : _h(h), _w(w), _srgb(srgb) {
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, texID, 0);
 	assert(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+#endif
 }
 
 void FBO::activate(bool clear) {
+#ifndef __amigaos4__
 	if (!active_chain.size() || active_chain.back() != this) {
 		active_chain.push_back(this);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _fbo);
@@ -60,9 +63,11 @@ void FBO::activate(bool clear) {
 		if (clear)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+#endif
 }
 
 void FBO::deactivate() {
+#ifndef __amigaos4__
 	if (active_chain.size() && active_chain.back() == this) {
 		active_chain.pop_back();
 		glPopAttrib();
@@ -79,13 +84,16 @@ void FBO::deactivate() {
 		else
 			glDisable(GL_FRAMEBUFFER_SRGB_EXT);
 	}
+#endif
 }
 
 void FBO::draw() {
+#ifndef __amigaos4__
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texID);
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	OGL_RenderTexturedRect(0, 0, _w, _h, 0, _h, _w, 0);
 	glDisable(GL_TEXTURE_RECTANGLE_ARB);
+#endif
 }
 
 void FBO::prepare_drawing_mode(bool blend) {
@@ -120,8 +128,10 @@ void FBO::draw_full(bool blend) {
 }
 
 FBO::~FBO() {
+#ifndef __amigaos4__
 	glDeleteFramebuffersEXT(1, &_fbo);
 	glDeleteRenderbuffersEXT(1, &_depthBuffer);
+#endif
 }
 
 
@@ -170,6 +180,7 @@ void FBOSwapper::copy(FBO& other, bool srgb) {
 }
 
 void FBOSwapper::blend(FBO& other, bool srgb) {
+#ifndef __amigaos4__
 	activate();
 	if (!srgb)
 		glDisable(GL_FRAMEBUFFER_SRGB_EXT);
@@ -177,9 +188,11 @@ void FBOSwapper::blend(FBO& other, bool srgb) {
 		glEnable(GL_FRAMEBUFFER_SRGB_EXT);
 	other.draw_full(true);
 	deactivate();
+#endif
 }
 
 void FBOSwapper::blend_multisample(FBO& other) {
+#ifndef __amigaos4__
 	swap();
 	activate();
 	
@@ -205,8 +218,9 @@ void FBOSwapper::blend_multisample(FBO& other) {
 	glClientActiveTextureARB(GL_TEXTURE1_ARB);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glClientActiveTextureARB(GL_TEXTURE0_ARB);
-	
+
 	deactivate();
+#endif
 }
 
 #endif

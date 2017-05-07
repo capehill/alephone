@@ -31,7 +31,7 @@
 //#include <unistd.h>
 #include <cstdlib>
 
-class Message;
+class _Message;
 class CommunicationsChannel;
 
 
@@ -39,7 +39,7 @@ class CommunicationsChannel;
 class MessageHandler
 {
 public:
-	virtual void handle(Message* inMessage, CommunicationsChannel* inChannel) = 0;
+	virtual void handle(_Message* inMessage, CommunicationsChannel* inChannel) = 0;
 	virtual ~MessageHandler() {}
 };
 
@@ -55,7 +55,7 @@ public:
 		: mFunction(inFunction)
 	{}
 
-	void handle(Message* inMessage, CommunicationsChannel* inChannel)
+	void handle(_Message* inMessage, CommunicationsChannel* inChannel)
 	{
 		if(mFunction != NULL)
 			mFunction(dynamic_cast<tMessage*>(inMessage), dynamic_cast<tChannel*>(inChannel));
@@ -70,7 +70,7 @@ private:
 
 
 
-template<typename tTargetClass, typename tMessage = Message, typename tChannel = CommunicationsChannel>
+template<typename tTargetClass, typename tMessage = _Message, typename tChannel = CommunicationsChannel>
 class MessageHandlerMethod : public MessageHandler
 {
 public:
@@ -82,7 +82,7 @@ public:
 		: mObject(inObject), mMethod(inMethod)
 	{}
 
-	void handle(Message* inMessage, CommunicationsChannel* inChannel)
+	void handle(_Message* inMessage, CommunicationsChannel* inChannel)
 	{
 		if(mObject != NULL && mMethod != NULL)
 			(mObject->*(mMethod))(dynamic_cast<tMessage*>(inMessage), dynamic_cast<tChannel*>(inChannel));
@@ -108,7 +108,7 @@ newMessageHandlerMethod(
 
 
 
-typedef TypedMessageHandlerFunction<Message> MessageHandlerFunction;
+typedef TypedMessageHandlerFunction<_Message> MessageHandlerFunction;
 
 
 

@@ -37,12 +37,23 @@ enum {
 // Integer types with specific bit size
 #include <SDL_types.h>
 #include <time.h>	// for time_t
+
+#ifdef __amigaos4__
+typedef unsigned char uint8;
+typedef   signed char  int8;
+typedef unsigned short uint16;
+typedef   signed short  int16;
+typedef unsigned long uint32;
+typedef   signed long  int32;
+#else
 typedef Uint8 uint8;
 typedef Sint8 int8;
 typedef Uint16 uint16;
 typedef Sint16 int16;
 typedef Uint32 uint32;
 typedef Sint32 int32;
+#endif
+
 typedef time_t TimeType;
 
 // Minimum and maximum values for these types

@@ -735,8 +735,8 @@ void Client::handleChatMessage(NetworkChatMessage* netChatMessage,
 	}
 }
 
-void Client::unexpectedMessageHandler(Message *message, CommunicationsChannel *) {
-	logAnomaly("unexpected message type %i received (net state)", message->type(), netState);
+void Client::unexpectedMessageHandler(_Message *message, CommunicationsChannel *) {
+logAnomaly("unexpected message type %i received (net state)", message->type(), netState);
 }
     
 
@@ -1036,7 +1036,7 @@ static void handleGameSessionMessage(GameSessionMessage* gameSessionMessage, Com
 	}
 }
 
-static void handleUnexpectedMessage(Message *inMessage, CommunicationsChannel *) {
+static void handleUnexpectedMessage(_Message *inMessage, CommunicationsChannel *) {
   if (handlerState == netAwaitingHello) {
     // an unexpected message before hello usually means we couldn't parse
     // hello; which means it's likely we're not compatible
@@ -1052,13 +1052,13 @@ static TypedMessageHandlerFunction<BigChunkOfDataMessage> luaMessageHandler(&han
 static TypedMessageHandlerFunction<BigChunkOfDataMessage> mapMessageHandler(&handleMapMessage);
 static TypedMessageHandlerFunction<NetworkChatMessage> networkChatMessageHandler(&handleNetworkChatMessage);
 static TypedMessageHandlerFunction<BigChunkOfDataMessage> physicsMessageHandler(&handlePhysicsMessage);
- static TypedMessageHandlerFunction<CapabilitiesMessage> capabilitiesMessageHandler(&handleCapabilitiesMessage);
+static TypedMessageHandlerFunction<CapabilitiesMessage> capabilitiesMessageHandler(&handleCapabilitiesMessage);
 static TypedMessageHandlerFunction<TopologyMessage> topologyMessageHandler(&handleTopologyMessage);
 static TypedMessageHandlerFunction<ServerWarningMessage> serverWarningMessageHandler(&handleServerWarningMessage);
 static TypedMessageHandlerFunction<ClientInfoMessage> clientInfoMessageHandler(&handleClientInfoMessage);
 static TypedMessageHandlerFunction<NetworkStatsMessage> networkStatsMessageHandler(&handleNetworkStatsMessage);
 static TypedMessageHandlerFunction<GameSessionMessage> gameSessionMessageHandler(&handleGameSessionMessage);
-static TypedMessageHandlerFunction<Message> unexpectedMessageHandler(&handleUnexpectedMessage);
+static TypedMessageHandlerFunction<_Message> unexpectedMessageHandler(&handleUnexpectedMessage);
 
 void NetSetGatherCallbacks(GatherCallbacks *gc) {
   gatherCallbacks = gc;

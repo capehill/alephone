@@ -273,7 +273,7 @@ CommunicationsChannel::_receiveMessage()
 	if(theResult == kComplete)
 	{
 		// Received a complete message; inflate (if possible) then enqueue it
-		Message* theMessageToEnqueue = mIncomingMessage;
+		_Message* theMessageToEnqueue = mIncomingMessage;
 
 		if(mMessageInflater != NULL)
 		{
@@ -413,7 +413,7 @@ CommunicationsChannel::pump()
 bool CommunicationsChannel::dispatchOneIncomingMessage() 
 {
   if (mIncomingMessages.empty()) return false;
-  Message* theMessage = mIncomingMessages.front();
+  _Message* theMessage = mIncomingMessages.front();
   if (messageHandler() != NULL) {
     messageHandler()->handle(theMessage, this);
   }
@@ -431,7 +431,7 @@ CommunicationsChannel::dispatchIncomingMessages()
 
 
 void
-CommunicationsChannel::enqueueOutgoingMessage(const Message& inMessage)
+CommunicationsChannel::enqueueOutgoingMessage(const _Message& inMessage)
 {
 	if(isConnected())
 	{
@@ -528,7 +528,7 @@ CommunicationsChannel::isMessageAvailable()
 
 // Call does not return unless (1) times out (NULL); (2) disconnected (NULL); or
 // (3) some message received (pointer to inflated message object).
-Message*
+_Message*
 CommunicationsChannel::receiveMessage(Uint32 inOverallTimeout, Uint32 inInactivityTimeout)
 {
 	// Here we give a backstop for our inactivity timeout
@@ -547,7 +547,7 @@ CommunicationsChannel::receiveMessage(Uint32 inOverallTimeout, Uint32 inInactivi
 		pump();
 	}
 
-	Message* theMessage = NULL;
+	_Message* theMessage = NULL;
 
 	if(!mIncomingMessages.empty())
 	{
@@ -562,13 +562,13 @@ CommunicationsChannel::receiveMessage(Uint32 inOverallTimeout, Uint32 inInactivi
 
 // As above, but if messages of type other than inType are received, they're handled
 // normally (so might want to install conservative Handler first)
-Message*
+_Message*
 CommunicationsChannel::receiveSpecificMessage(
 	MessageTypeID inType,
 	Uint32 inOverallTimeout,
 	Uint32 inInactivityTimeout)
 {
-	Message* theMessage = NULL;
+	_Message* theMessage = NULL;
 	Uint32 theDeadline = SDL_GetTicks() + inOverallTimeout;
 
 	while(SDL_GetTicks() < theDeadline)

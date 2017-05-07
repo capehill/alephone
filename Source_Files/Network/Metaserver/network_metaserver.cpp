@@ -60,7 +60,7 @@ static const int kKeyLength = 16;
 static std::string remove_formatting(const std::string &s);
 
 void
-MetaserverClient::handleUnexpectedMessage(Message* inMessage, CommunicationsChannel* inChannel)
+MetaserverClient::handleUnexpectedMessage(_Message* inMessage, CommunicationsChannel* inChannel)
 {
 	logAnomaly("Metaserver received message ID %i", inMessage->type());
 	if(inMessage->type() == UninflatedMessage::kTypeID)
@@ -120,7 +120,7 @@ void MetaserverClient::handlePrivateMessage(PrivateMessage* message, Communicati
 
 
 void
-MetaserverClient::handleKeepAliveMessage(Message* inMessage, CommunicationsChannel* inChannel)
+MetaserverClient::handleKeepAliveMessage(_Message* inMessage, CommunicationsChannel* inChannel)
 {
 	inChannel->enqueueOutgoingMessage(KeepAliveMessage());
 }
@@ -252,7 +252,7 @@ MetaserverClient::connect(const std::string& serverName, uint16 port, const std:
 		LoginAndPlayerInfoMessage theLoginMessage(userName, m_playerName, m_teamName);
 		m_channel->enqueueOutgoingMessage(theLoginMessage);
 	
-		auto_ptr<Message> theSaltOrAcceptMessage(m_channel->receiveMessage());
+		auto_ptr<_Message> theSaltOrAcceptMessage(m_channel->receiveMessage());
 		if (theSaltOrAcceptMessage.get() == 0)
 			throw ServerConnectException("Server Disconnected");
 	
@@ -313,7 +313,7 @@ MetaserverClient::connect(const std::string& serverName, uint16 port, const std:
 			BigChunkOfDataMessage theKeyMessage(kCLIENT_KEY, (uint8 *) theKey, sizeof(theKey));
 			m_channel->enqueueOutgoingMessage(theKeyMessage);
 
-			auto_ptr<Message> theResponseMessage(m_channel->receiveMessage());
+			auto_ptr<_Message> theResponseMessage(m_channel->receiveMessage());
 			if (!theResponseMessage.get())
 			{
 				throw ServerConnectException("Server Disconnected");

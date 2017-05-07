@@ -169,7 +169,7 @@ class MessageInflater;
 class MessageHandler;
 class MessageDispatcher;
 
-class Message;
+class _Message;
 class ChatMessage;
 class BroadcastMessage;
 
@@ -301,10 +301,10 @@ public:
 	~MetaserverClient();
 
 private:
-	void handleUnexpectedMessage(Message* inMessage, CommunicationsChannel* inChannel);
+	void handleUnexpectedMessage(_Message* inMessage, CommunicationsChannel* inChannel);
 	void handleChatMessage(ChatMessage* inMessage, CommunicationsChannel* inChannel);
 	void handlePrivateMessage(PrivateMessage* inMessage, CommunicationsChannel* inChannel);
-	void handleKeepAliveMessage(Message* inMessage, CommunicationsChannel* inChannel);
+	void handleKeepAliveMessage(_Message* inMessage, CommunicationsChannel* inChannel);
 	void handleBroadcastMessage(BroadcastMessage* inMessage, CommunicationsChannel* inChannel);
         void handlePlayerListMessage(PlayerListMessage* inMessage, CommunicationsChannel* inChannel);
         void handleRoomListMessage(RoomListMessage* inMessage, CommunicationsChannel* inChannel);

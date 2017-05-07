@@ -36,15 +36,15 @@
 class MessageInflater
 {
 public:
-	Message*	inflate(const UninflatedMessage& inSource);
-	void		learnPrototype(const Message& inPrototype) { learnPrototypeForType(inPrototype.type(), inPrototype); }
-	void		learnPrototypeForType(MessageTypeID inType, const Message& inPrototype);
+	_Message*	inflate(const UninflatedMessage& inSource);
+	void		learnPrototype(const _Message& inPrototype) { learnPrototypeForType(inPrototype.type(), inPrototype); }
+	void		learnPrototypeForType(MessageTypeID inType, const _Message& inPrototype);
 	void		removePrototypeForType(MessageTypeID inType);
 
 	~MessageInflater();
 
 private:
-	typedef std::map<MessageTypeID, Message*> MessageInflaterMap;
+	typedef std::map<MessageTypeID, _Message*> MessageInflaterMap;
 	MessageInflaterMap	mMap;
 };
 
