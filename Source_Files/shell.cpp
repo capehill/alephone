@@ -603,6 +603,11 @@ void shutdown_application(void)
 	SDLNet_Quit();
 #endif
 	TTF_Quit();
+
+    extern void free_video_resources();
+
+    free_video_resources();
+
 	SDL_Quit();
 }
 

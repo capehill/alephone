@@ -80,6 +80,7 @@ static SDL_Surface *main_surface;	// Main (display) surface
 static SDL_Window *main_screen;
 static SDL_Renderer *main_render;
 static SDL_Texture *main_texture;
+static SDL_GLContext context;
 
 // Rendering buffer for the main view, the overhead map, and the terminals.
 // The HUD has a separate buffer.
@@ -327,7 +328,7 @@ bool alephone::Screen::fifty_percent()
 
 bool alephone::Screen::seventyfive_percent()
 {
-	return screen_mode.height == 240;;
+	return screen_mode.height == 240;
 }
 
 SDL_Rect alephone::Screen::window_rect()
@@ -559,7 +560,8 @@ static void reallocate_world_pixels(int width, int height)
 	}
 	SDL_PixelFormat *f = main_surface->format;
 //	world_pixels = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
-	switch (bit_depth)
+printf("%s, depth %d\n", __FUNCTION__, bit_depth);
+    switch (bit_depth)
 	{
 	case 8:
 		world_pixels = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, f->BitsPerPixel, 0, 0, 0, 0);
@@ -570,7 +572,6 @@ static void reallocate_world_pixels(int width, int height)
 	default:
 		world_pixels = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, pixel_format_32.Rmask, pixel_format_32.Gmask, pixel_format_32.Bmask, 0);
 		break;
-
 	}
 
 	if (world_pixels == NULL)
@@ -682,10 +683,41 @@ void enter_screen(void)
 
 void exit_screen(void)
 {
+printf("exit_screen\n");
 	in_game = false;
 #ifdef HAVE_OPENGL
 	OGL_StopRun();
 #endif
+}
+
+void free_video_resources()
+{
+    printf("free video resources\n");
+
+    if (context) {
+        OGL_Blitter::StopTextures();
+        SDL_GL_DeleteContext(context);
+    }
+
+    if (main_surface) {
+        SDL_FreeSurface(main_surface);
+        main_surface = NULL;
+    }
+
+    if (main_texture) {
+        SDL_DestroyTexture(main_texture);
+        main_texture = NULL;
+    }
+
+    if (main_render) {
+        SDL_DestroyRenderer(main_render);
+        main_render = NULL;
+    }
+
+    if (main_screen) {
+        SDL_DestroyWindow(main_screen);
+        main_screen = NULL;
+    }
 }
 
 
@@ -924,7 +956,7 @@ static void change_screen_mode(int width, int height, int depth, bool nogl, bool
 	{
 		// see if we can actually run shaders
 		if (!context_created) {
-			SDL_GL_CreateContext(main_screen);
+			context = SDL_GL_CreateContext(main_screen);
 			context_created = true;
 		}
 #ifdef __WIN32__
@@ -1018,7 +1050,7 @@ static void change_screen_mode(int width, int height, int depth, bool nogl, bool
 	}
 #ifdef HAVE_OPENGL
 	if (!context_created && !nogl && screen_mode.acceleration != _no_acceleration) {
-		SDL_GL_CreateContext(main_screen);
+		context = SDL_GL_CreateContext(main_screen);
 		context_created = true;
 	}
 #endif

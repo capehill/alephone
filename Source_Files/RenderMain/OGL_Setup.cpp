@@ -284,10 +284,14 @@ void OGL_TextureOptionsBase::Load()
 			flags |= ImageLoader_LoadMipMaps;
 	}
 
+#ifdef __amigaos4__
+// MiniGL misses critical function glCompressedTexImage2DARB
+#else
 	if (hasS3TC) 
 	{
 		flags |= ImageLoader_CanUseDXTC;
 	}
+#endif
 
 	if (Get_OGL_ConfigureData().GeForceFix)
 	{
