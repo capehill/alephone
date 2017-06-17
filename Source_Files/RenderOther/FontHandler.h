@@ -48,6 +48,17 @@ Jan 14, 2001 (Loren Petrich):
 
 struct screen_rectangle;
 
+#ifdef __amigaos4__
+
+#include <vector>
+
+struct CharInfo {
+    GLfloat sx, sy, sw, sh;
+    GLfloat tl, tt, tr, tb;
+};
+
+#endif
+
 class FontSpecifier;
 
 class FontSpecifier
@@ -134,7 +145,13 @@ public:
 	short TxtrWidth, TxtrHeight;
 	int GetTxtrSize() {return int(TxtrWidth)*int(TxtrHeight);}
 	GLuint TxtrID;
+
+#ifdef __amigaos4__
+	std::vector<CharInfo> charInfo;
+#else
 	uint32 DispList;
+#endif
+
 	static set<FontSpecifier*> *m_font_registry;
 #endif
 };

@@ -164,6 +164,7 @@ int FontSpecifier::TextWidth(const char *text)
 }
 
 #ifdef HAVE_OPENGL
+
 // Reset the OpenGL fonts; its arg indicates whether this is for starting an OpenGL session
 // (this is to avoid texture and display-list memory leaks and other such things)
 void FontSpecifier::OGL_Reset(bool IsStarting)
@@ -173,7 +174,9 @@ void FontSpecifier::OGL_Reset(bool IsStarting)
 	if (!IsStarting && OGL_Texture)
 	{
 		glDeleteTextures(1,&TxtrID);
+#ifndef __amigaos4__
 		glDeleteLists(DispList,256);
+#endif
 		OGL_Deregister(this);
 	}
 
@@ -293,9 +296,14 @@ void FontSpecifier::OGL_Reset(bool IsStarting)
  	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	
+
+#ifdef __amigaos4__
+	charInfo.resize(256);
+#else
  	// Allocate and create display lists of rendering commands
  	DispList = glGenLists(256);
+#endif
+
  	GLfloat TWidNorm = GLfloat(1)/TxtrWidth;
  	GLfloat THtNorm = GLfloat(1)/TxtrHeight;
  	for (int k=0; k<=LastLine; k++)
@@ -310,7 +318,17 @@ void FontSpecifier::OGL_Reset(bool IsStarting)
  			int NewPos = Pos + Width;
  			GLfloat Left = TWidNorm*Pos;
  			GLfloat Right = TWidNorm*NewPos;
- 			
+
+#ifdef __amigaos4__
+			charInfo[Which].sx = Pad;
+			charInfo[Which].sy = ascent_p;
+			charInfo[Which].sw = Width;
+			charInfo[Which].sh = descent_p + ascent_p;
+			charInfo[Which].tl = Left;
+			charInfo[Which].tt = Top;
+			charInfo[Which].tr = Right;
+			charInfo[Which].tb = Bottom;
+#else
  			glNewList(DispList + Which, GL_COMPILE);
  			
  			// Move to the current glyph's (padded) position
@@ -324,7 +342,7 @@ void FontSpecifier::OGL_Reset(bool IsStarting)
 			glTranslated(Width-Pad,0,0);
 			
  			glEndList();
- 			
+#endif
  			// For next one
  			Pos = NewPos;
  			Which++;
@@ -359,7 +377,21 @@ void FontSpecifier::OGL_Render(const char *Text)
 	for (size_t k=0; k<Len; k++)
 	{
 		unsigned char c = Text[k];
+#ifdef __amigaos4__
+		if (!charInfo.empty())
+		{
+			glTranslatef(-charInfo[c].sx,0,0);
+
+			// Draw the glyph rectangle
+			OGL_RenderTexturedRect(0, -charInfo[c].sy, charInfo[c].sw, charInfo[c].sh,
+    							   charInfo[c].tl, charInfo[c].tt, charInfo[c].tr, charInfo[c].tb);
+
+			// Move to the next glyph's position
+			glTranslated(charInfo[c].sw - charInfo[c].sx,0,0);
+		}
+#else
 		glCallList(DispList+c);
+#endif
 	}
 	
 	glPopAttrib();
