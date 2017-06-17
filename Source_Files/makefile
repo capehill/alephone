@@ -18,17 +18,18 @@ DEFINES= -DSDL -DHAVE_OPENGL -DHAVE_LUA -DHAVE_UNISTD_H -DHAVE_MEMMOVE #-D__USE_
 
 CFLAGS=-O2 -ggdb $(HEADERS) $(DEFINES) -Wall
 
-LIBS= XML/libxml.a TCPMess/libtcpmess.a Sound/libsound.a \
-RenderOther/librenderother.a RenderMain/librendermain.a Network/libnetwork.a \
-ModelView/libmodelview.a Misc/libmisc.a Lua/liblua.a LibNAT/liblibnat.a       \
-Input/libinput.a GameWorld/libgameworld.a Files/libfiles.a FFmpeg/libffmpeg.a \
-Expat/libexpat.a CSeries/libcseries.a
-
+# This is a bit messy, I'm too lazy to sort out the correct linkage order (if there is one)
+LIBS= Sound/libsound.a XML/libxml.a Network/libnetwork.a \
+RenderOther/librenderother.a RenderMain/librendermain.a \
+ModelView/libmodelview.a Lua/liblua.a Misc/libmisc.a LibNAT/liblibnat.a \
+Input/libinput.a GameWorld/libgameworld.a FFmpeg/libffmpeg.a \
+Expat/libexpat.a CSeries/libcseries.a TCPMess/libtcpmess.a XML/libxml.a Files/libfiles.a \
+RenderOther/librenderother.a
 
 export # pass the variables to submakes
 
 alephone: $(OBJS) libs
-	g++ -o $@ $(OBJS) $(LIBS) $(LIBS) -lSDL2 -lSDL2_ttf -lSDL2_net -lpthread -lfreetype -lz -lauto
+	g++ -o $@ $(OBJS) $(LIBS) -lSDL2 -lSDL2_ttf -lSDL2_net -lpthread -lfreetype -lz
 	echo done
 
 %.o:%.cpp
