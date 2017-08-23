@@ -53,6 +53,7 @@ public:
 
 private:
 	bool stereo;
+	bool loaded;
 	float rate;
 
 	OggVorbis_File ov_file;

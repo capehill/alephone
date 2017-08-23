@@ -14,7 +14,7 @@ SRC= shell.cpp shell_misc.cpp
 
 OBJS= $(SRC:.cpp=.o)
 
-DEFINES= -DSDL -DHAVE_OPENGL -DHAVE_LUA -DHAVE_UNISTD_H -DHAVE_MEMMOVE #-D__USE_AMIGAOS_NAMESPACE__ #HAVE_LUA HAVE_SDL_IMAGE
+DEFINES= -DSDL -DHAVE_OPENGL -DHAVE_LUA -DHAVE_UNISTD_H -DHAVE_MEMMOVE -DHAVE_VORBISFILE #-D__USE_AMIGAOS_NAMESPACE__ #HAVE_LUA HAVE_SDL_IMAGE
 
 CFLAGS=-O2 -ggdb $(HEADERS) $(DEFINES) -Wall
 
@@ -29,7 +29,7 @@ RenderOther/librenderother.a
 export # pass the variables to submakes
 
 alephone: $(OBJS) libs
-	g++ -o $@ $(OBJS) $(LIBS) -lSDL2 -lSDL2_ttf -lSDL2_net -lpthread -lfreetype -lz
+	g++ -o $@ $(OBJS) $(LIBS) -lSDL2 -lSDL2_ttf -lSDL2_net -lpthread -lfreetype -lz -lvorbisfile -lvorbis -logg
 	echo done
 
 %.o:%.cpp

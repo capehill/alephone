@@ -47,6 +47,7 @@ static long sdl_tell_func(void *datasource)
 
 VorbisDecoder::VorbisDecoder() :
 	stereo(false),
+	loaded(false),
 	rate(0)
 {	
 	callbacks.read_func = sdl_read_func;
@@ -74,6 +75,7 @@ bool VorbisDecoder::Open(FileSpecifier &File)
 			if (!vi) return false;
 			stereo = vi->channels == 2;
 			rate = vi->rate;
+			loaded = true;
 			return true;
 		}
 		else
@@ -110,7 +112,11 @@ void VorbisDecoder::Rewind()
 
 void VorbisDecoder::Close()
 {
-	ov_clear(&ov_file);
+	if (loaded)
+	{
+		ov_clear(&ov_file);
+		loaded = false;
+	}
 }
 
 #endif
