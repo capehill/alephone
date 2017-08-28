@@ -123,6 +123,10 @@
 #include "HTTP.h"
 #include "WadImageCache.h"
 
+#ifdef __amigaos4__
+static const char stack_cookie[] __attribute__((used)) = "$STACK:200000";
+#endif
+
 // LP addition: whether or not the cheats are active
 // Defined in shell_misc.cpp
 extern bool CheatsActive;
