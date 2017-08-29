@@ -967,8 +967,6 @@ static void change_screen_mode(int width, int height, int depth, bool nogl, bool
 			fprintf(stderr, "WARNING: Failed to initialize OpenGL (Shader) renderer\n");
 			fprintf(stderr, "WARNING: Retrying with OpenGL (Classic) renderer\n");
 			screen_mode.acceleration = graphics_preferences->screen_mode.acceleration = _opengl_acceleration;
-
-			main_screen = create_window(sdl_width, sdl_height, flags);
 		}
 		else
 		{
